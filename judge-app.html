@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Train for Life 2026 — Judging</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+
+  :root {
+    --green: #1A6B3C;
+    --green-light: #E8F5EE;
+    --green-mid: #2D8A52;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-mid: #1E78CC;
+    --track-color: #185FA5;
+    --track-light: #E6F1FB;
+    --track-mid: #1E78CC;
+    --gold: #C8960A;
+    --gold-light: #FDF3D0;
+    --red: #C0392B;
+    --red-light: #FDECEA;
+    --amber: #9A6A00;
+    --amber-light: #FDF3D0;
+    --text: #1A1A2E;
+    --text-secondary: #5A6070;
+    --text-tertiary: #9AA0AD;
+    --border: #E2E6EC;
+    --border-light: #F0F3F7;
+    --bg: #F7F9FC;
+    --white: #FFFFFF;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --radius: 14px;
+    --radius-sm: 9px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* ── HOME SCREEN ── */
+  #screen-home { background: var(--bg); }
+
+  .home-hero {
+    background: linear-gradient(160deg, #0D1B2A 0%, #1A3A5C 60%, #185FA5 100%);
+    padding: 52px 24px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .home-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .home-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: -30px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .home-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.8);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .home-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: #fff;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .home-subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0;
+  }
+
+  .home-body { padding: 24px 20px 32px; flex: 1; }
+
+  .field-group { margin-bottom: 24px; }
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .track-options { display: flex; flex-direction: column; gap: 10px; }
+  .track-opt {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .track-opt.selected-green { border-color: var(--green); background: var(--green-light); }
+  .track-opt.selected-blue { border-color: var(--blue); background: var(--blue-light); }
+  .track-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .track-icon.green { background: var(--green-light); }
+  .track-icon.blue { background: var(--blue-light); }
+  .track-opt.selected-green .track-icon { background: var(--green); }
+  .track-opt.selected-blue .track-icon { background: var(--blue); }
+  .track-text { flex: 1; }
+  .track-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .track-count { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+  .track-opt.selected-green .track-name { color: var(--green); }
+  .track-opt.selected-blue .track-name { color: var(--blue); }
+  .track-radio {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: border-color 0.18s;
+  }
+  .track-opt.selected-green .track-radio { border-color: var(--green); }
+  .track-opt.selected-blue .track-radio { border-color: var(--blue); }
+  .track-radio-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    display: none;
+  }
+  .track-opt.selected-green .track-radio-dot { display: block; background: var(--green); }
+  .track-opt.selected-blue .track-radio-dot { display: block; background: var(--blue); }
+
+  .judge-grid { display: flex; flex-direction: column; gap: 8px; }
+  .judge-opt {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .judge-opt.selected {
+    border-color: var(--track-color);
+    background: var(--track-light);
+  }
+  .judge-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--border-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+    flex-shrink: 0; transition: all 0.18s;
+  }
+  .judge-opt.selected .judge-avatar {
+    background: var(--track-color);
+    color: #fff;
+  }
+  .judge-opt-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
+  .judge-opt.selected .judge-opt-name { color: var(--track-color); }
+  .judge-check { font-size: 16px; opacity: 0; transition: opacity 0.18s; }
+  .judge-opt.selected .judge-check { opacity: 1; }
+
+  .start-btn {
+    width: 100%; height: 52px;
+    border: none; border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .start-btn:disabled {
+    background: var(--border-light);
+    color: var(--text-tertiary);
+  }
+  .start-btn.ready-green { background: var(--green); color: #fff; box-shadow: 0 4px 16px rgba(26,107,60,0.3); }
+  .start-btn.ready-blue  { background: var(--blue);  color: #fff; box-shadow: 0 4px 16px rgba(24,95,165,0.3); }
+
+  .home-footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    padding: 0 20px 16px;
+    line-height: 1.5;
+  }
+
+  /* ── TOP BAR ── */
+  .top-bar {
+    background: var(--track-color);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px;
+    position: sticky; top: 0; z-index: 5;
+    flex-shrink: 0;
+  }
+  .top-bar-menu {
+    width: 38px; height: 38px; border-radius: 9px;
+    background: rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; border: none;
+  }
+  .top-bar-center { flex: 1; text-align: center; }
+  .top-bar-label { font-size: 11px; color: rgba(255,255,255,0.65); }
+  .top-bar-team { font-size: 18px; font-weight: 600; color: #fff; line-height: 1.2; }
+  .top-bar-right { text-align: right; flex-shrink: 0; }
+  .sync-indicator { font-size: 11px; display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .sync-dot.synced { background: #5DCAA5; }
+  .sync-dot.pending { background: #F0A500; animation: pulse 1s infinite; }
+  .sync-dot.error { background: #E74C3C; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .sync-text { color: rgba(255,255,255,0.75); }
+
+  /* ── SCORING SCREEN ── */
+  #screen-scoring { background: var(--bg); }
+  .scoring-body { flex: 1; overflow-y: auto; padding: 16px 16px 24px; }
+
+  .team-progress {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-label { font-size: 12px; color: var(--text-secondary); }
+  .progress-frac { font-size: 12px; font-weight: 600; color: var(--track-color); }
+  .progress-track { height: 5px; background: var(--border-light); border-radius: 3px; }
+  .progress-fill { height: 5px; background: var(--track-color); border-radius: 3px; transition: width 0.3s; }
+
+  .criteria-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .criteria-card.scored { border-color: var(--track-color); }
+  .criteria-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .criteria-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .criteria-weight { font-size: 11px; color: var(--text-tertiary); background: var(--border-light); padding: 2px 8px; border-radius: 10px; }
+  .criteria-card.scored .criteria-weight { background: var(--track-light); color: var(--track-color); }
+
+  .btn-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; }
+  .score-btn {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--text-secondary);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .score-btn:active { transform: scale(0.9); }
+  .score-btn.sel-mid  { background: var(--blue);  color: #fff; border-color: var(--blue);  }
+  .score-btn.sel-high { background: var(--green); color: #fff; border-color: var(--green); }
+  .score-btn.sel-low  { background: var(--red);   color: #fff; border-color: var(--red);   }
+
+  /* Override for green track */
+  .track-green .score-btn.sel-mid  { background: var(--green-mid); border-color: var(--green-mid); }
+  .track-green .score-btn.sel-high { background: var(--green);     border-color: var(--green); }
+
+  .scoring-footer {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 14px 16px;
+    flex-shrink: 0;
+  }
+  .footer-stats { display: flex; justify-content: space-between; margin-bottom: 12px; }
+  .footer-stat { text-align: center; }
+  .footer-stat-val { font-size: 18px; font-weight: 600; color: var(--track-color); }
+  .footer-stat-label { font-size: 10px; color: var(--text-tertiary); margin-top: 1px; }
+
+  .submit-btn {
+    width: 100%; height: 50px;
+    border: none; border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .submit-btn:disabled { background: var(--border-light); color: var(--text-tertiary); }
+  .submit-btn.ready { background: var(--track-color); color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+
+  .skip-link {
+    display: block; text-align: center;
+    margin-top: 10px;
+    font-size: 13px; color: var(--text-tertiary);
+    cursor: pointer; text-decoration: underline;
+  }
+
+  /* ── CONFIRMATION SCREEN ── */
+  #screen-confirm { background: var(--bg); }
+  .confirm-body { flex: 1; overflow-y: auto; padding: 20px 16px 24px; }
+  .confirm-hero {
+    text-align: center; padding: 24px 20px;
+    background: var(--white); border-radius: var(--radius);
+    border: 1px solid var(--border); margin-bottom: 16px;
+  }
+  .confirm-checkmark {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--track-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin: 0 auto 12px;
+  }
+  .confirm-team { font-size: 22px; font-weight: 600; color: var(--track-color); margin-bottom: 4px; }
+  .confirm-subtitle { font-size: 13px; color: var(--text-tertiary); }
+
+  .confirm-scores {
+    background: var(--white); border-radius: var(--radius);
+    border: 1px solid var(--border); overflow: hidden; margin-bottom: 16px;
+  }
+  .confirm-score-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 16px; border-bottom: 1px solid var(--border-light);
+  }
+  .confirm-score-row:last-child { border-bottom: none; }
+  .confirm-crit-name { font-size: 13px; color: var(--text-secondary); flex: 1; }
+  .confirm-crit-weight { font-size: 11px; color: var(--text-tertiary); margin-right: 12px; }
+  .confirm-score-pill {
+    min-width: 32px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600;
+  }
+  .confirm-score-pill.high { background: #D4EDDA; color: #0F6E56; }
+  .confirm-score-pill.mid  { background: var(--blue-light); color: var(--blue); }
+  .confirm-score-pill.low  { background: var(--red-light); color: var(--red); }
+  .confirm-total {
+    background: var(--track-light); padding: 12px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  .confirm-total-label { font-size: 13px; font-weight: 500; color: var(--track-color); }
+  .confirm-total-val { font-size: 20px; font-weight: 700; color: var(--track-color); }
+
+  .confirm-actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn-next {
+    height: 50px; border: none; border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    background: var(--track-color); color: #fff; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+  .btn-edit {
+    height: 44px; border: 1.5px solid var(--border); border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    background: var(--white); color: var(--text-secondary); cursor: pointer;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    z-index: 50; display: none;
+  }
+  .sidebar-overlay.open { display: block; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 280px; background: var(--white);
+    z-index: 51; transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow-lg);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-header {
+    background: var(--track-color);
+    padding: 20px 16px 16px; flex-shrink: 0;
+  }
+  .sidebar-header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .sidebar-title { font-size: 15px; font-weight: 600; color: #fff; }
+  .sidebar-judge { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+  .sidebar-close {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); border: none;
+    color: #fff; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sidebar-progress-text { font-size: 12px; color: rgba(255,255,255,0.75); margin-bottom: 8px; }
+  .sidebar-progress-bar { height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+  .sidebar-progress-fill { height: 4px; border-radius: 2px; background: #5DCAA5; transition: width 0.3s; }
+
+  .sidebar-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px 6px; border-bottom: 1px solid var(--border-light); }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-tertiary); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  .sidebar-list { flex: 1; overflow-y: auto; padding: 6px 0; }
+  .team-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; cursor: pointer; transition: background 0.15s;
+  }
+  .team-row:active { background: var(--border-light); }
+  .team-row.is-current { background: var(--track-light); }
+  .team-num-badge {
+    width: 34px; height: 34px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; flex-shrink: 0;
+  }
+  .badge-submitted { background: #D4EDDA; color: #0F6E56; }
+  .badge-current   { background: var(--track-color); color: #fff; }
+  .badge-skipped   { background: var(--amber-light); color: var(--amber); }
+  .badge-empty     { background: var(--border-light); color: var(--text-tertiary); }
+  .team-row-info { flex: 1; }
+  .team-row-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .team-row.is-current .team-row-name { color: var(--track-color); }
+  .team-row-status { font-size: 11px; margin-top: 1px; }
+  .status-submitted { color: #0F6E56; }
+  .status-current   { color: var(--track-color); }
+  .status-skipped   { color: var(--amber); }
+  .status-empty     { color: var(--text-tertiary); }
+  .team-row-score { font-size: 12px; color: var(--text-tertiary); flex-shrink: 0; }
+
+  .sidebar-footer { padding: 12px 14px 20px; border-top: 1px solid var(--border); flex-shrink: 0; }
+  .finalise-btn {
+    width: 100%; height: 44px; border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.2s;
+  }
+  .finalise-btn:disabled { background: var(--border-light); color: var(--text-tertiary); cursor: default; }
+  .finalise-btn.ready { background: #0F6E56; color: #fff; }
+  .finalise-hint { font-size: 10px; color: var(--text-tertiary); text-align: center; margin-top: 6px; }
+
+  /* ── DONE SCREEN ── */
+  #screen-done { background: var(--bg); align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+  .done-icon { font-size: 64px; margin-bottom: 20px; }
+  .done-title { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); margin-bottom: 8px; }
+  .done-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 280px; }
+  .done-badge { margin-top: 24px; background: var(--track-light); border-radius: var(--radius); padding: 16px 20px; width: 100%; max-width: 280px; }
+  .done-badge-label { font-size: 11px; color: var(--track-color); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 4px; }
+  .done-badge-val { font-size: 14px; color: var(--text); font-weight: 500; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1A1A2E; color: #fff; font-size: 13px;
+    padding: 10px 20px; border-radius: 20px;
+    transition: transform 0.3s; z-index: 100; white-space: nowrap;
+    box-shadow: var(--shadow-lg);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── WARNING MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 200; display: none; align-items: flex-end; padding: 0;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet {
+    background: var(--white); width: 100%; border-radius: 20px 20px 0 0;
+    padding: 24px 20px 36px; animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .modal-body { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+  .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+  .modal-btn-primary {
+    height: 48px; border: none; border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer;
+  }
+  .modal-btn-secondary {
+    height: 44px; border: 1.5px solid var(--border); border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    background: var(--white); color: var(--text-secondary); cursor: pointer;
+  }
+
+  /* Recovered session banner */
+  .recovery-banner {
+    background: var(--gold-light); border: 1px solid #E6C040;
+    border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px;
+  }
+  .recovery-banner-title { font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 2px; }
+  .recovery-banner-text { font-size: 12px; color: #7A6000; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HOME SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div class="home-hero">
+    <div class="home-badge">Semi-final · Judging Portal</div>
+    <div class="home-title">'Train' for Life's<br>Journeys 2.0 (2026)</div>
+    <div class="home-subtitle">Environmental &amp; Social Innovation Challenge</div>
+  </div>
+
+  <div class="home-body">
+    <div id="recovery-notice"></div>
+
+    <div class="field-group">
+      <span class="field-label">Select your track</span>
+      <div class="track-options">
+        <div class="track-opt" id="track-green" onclick="selectTrack('green')">
+          <div class="track-icon green">🌱</div>
+          <div class="track-text">
+            <div class="track-name">Social Inclusion Track</div>
+            <div class="track-count">18 teams</div>
+          </div>
+          <div class="track-radio"><div class="track-radio-dot"></div></div>
+        </div>
+        <div class="track-opt" id="track-blue" onclick="selectTrack('blue')">
+          <div class="track-icon blue">🌍</div>
+          <div class="track-text">
+            <div class="track-name">Greenhouse Gas Reduction Track</div>
+            <div class="track-count">10 teams</div>
+          </div>
+          <div class="track-radio"><div class="track-radio-dot"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <span class="field-label">Select your name</span>
+      <div class="judge-grid" id="judge-grid">
+        <div style="font-size:13px; color:var(--text-tertiary); text-align:center; padding:16px 0;">
+          Please select a track first
+        </div>
+      </div>
+    </div>
+
+    <button class="start-btn" id="start-btn" disabled onclick="startJudging()">
+      Start Judging
+    </button>
+  </div>
+
+  <div class="home-footer">
+    Scores are saved to your device and synced automatically<br>
+    <span id="admin-link" onclick="goAdmin()" style="cursor:pointer; text-decoration:underline; opacity:0.5;">●</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SCORING SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-scoring" class="screen">
+  <div class="top-bar" id="scoring-topbar">
+    <button class="top-bar-menu" onclick="toggleSidebar()">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+        <rect width="18" height="2" rx="1" fill="white"/>
+        <rect y="6" width="18" height="2" rx="1" fill="white"/>
+        <rect y="12" width="18" height="2" rx="1" fill="white"/>
+      </svg>
+    </button>
+    <div class="top-bar-center">
+      <div class="top-bar-label" id="tb-label">Now scoring</div>
+      <div class="top-bar-team" id="tb-team">—</div>
+    </div>
+    <div class="top-bar-right">
+      <div style="font-size:10px; color:rgba(255,255,255,0.65);" id="tb-judge">—</div>
+      <div class="sync-indicator">
+        <div class="sync-dot synced" id="sync-dot"></div>
+        <div class="sync-text" id="sync-text">Synced</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scoring-body" id="scoring-body">
+    <div class="team-progress">
+      <div class="progress-info">
+        <span class="progress-label" id="prog-label">Teams scored</span>
+        <span class="progress-frac" id="prog-frac">0 / 18</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div id="criteria-cards"></div>
+  </div>
+
+  <div class="scoring-footer">
+    <div class="footer-stats">
+      <div class="footer-stat">
+        <div class="footer-stat-val" id="stat-scored">0/7</div>
+        <div class="footer-stat-label">Criteria</div>
+      </div>
+      <div class="footer-stat">
+        <div class="footer-stat-val" id="stat-total">—</div>
+        <div class="footer-stat-label">Raw total</div>
+      </div>
+      <div class="footer-stat">
+        <div class="footer-stat-val" id="stat-weighted">—</div>
+        <div class="footer-stat-label">Weighted</div>
+      </div>
+    </div>
+    <button class="submit-btn" id="submit-btn" disabled onclick="submitTeam()">
+      Submit Score
+    </button>
+    <span class="skip-link" onclick="skipTeam()">Skip this team (absent)</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CONFIRMATION SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-confirm" class="screen">
+  <div class="top-bar" id="confirm-topbar">
+    <div style="width:38px;"></div>
+    <div class="top-bar-center">
+      <div class="top-bar-label">Submitted</div>
+      <div class="top-bar-team" id="conf-team-title">—</div>
+    </div>
+    <div style="width:38px;"></div>
+  </div>
+
+  <div class="confirm-body">
+    <div class="confirm-hero">
+      <div class="confirm-checkmark" id="conf-checkmark">✓</div>
+      <div class="confirm-team" id="conf-team">—</div>
+      <div class="confirm-subtitle">Score submitted successfully</div>
+    </div>
+
+    <div class="confirm-scores" id="conf-scores-list"></div>
+
+    <div class="confirm-actions">
+      <button class="btn-next" id="btn-next" onclick="goNextTeam()">Next Team →</button>
+      <button class="btn-edit" onclick="editCurrentTeam()">✏ Edit these scores</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     DONE SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-done" class="screen">
+  <div class="done-icon">🎉</div>
+  <div class="done-title">All Done!</div>
+  <div class="done-sub">Thank you for judging. Your scores have been saved and synced to the system.</div>
+  <div class="done-badge">
+    <div class="done-badge-label">Session summary</div>
+    <div class="done-badge-val" id="done-summary">—</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════ -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header" id="sidebar-header">
+    <div class="sidebar-header-top">
+      <div>
+        <div class="sidebar-title" id="sb-track-name">All Teams</div>
+        <div class="sidebar-judge" id="sb-judge-name">—</div>
+      </div>
+      <button class="sidebar-close" onclick="toggleSidebar()">×</button>
+    </div>
+    <div class="sidebar-progress-text" id="sb-progress-text">—</div>
+    <div class="sidebar-progress-bar">
+      <div class="sidebar-progress-fill" id="sb-progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="sidebar-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#D4EDDA;"></div>Submitted</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--track-color);"></div>Current</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--amber-light); border:1px solid var(--amber);"></div>Skipped</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--border-light); border:1px solid var(--border);"></div>Not scored</div>
+  </div>
+
+  <div class="sidebar-list" id="sidebar-list"></div>
+
+  <div class="sidebar-footer">
+    <button class="finalise-btn" id="finalise-btn" disabled onclick="finaliseScores()">
+      🔒 Finalise &amp; Lock Scores
+    </button>
+    <div class="finalise-hint" id="finalise-hint">Score all teams to unlock</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-skip">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Skip this team?</div>
+    <div class="modal-body">This team will be marked as absent and excluded from the final ranking. You can come back to score them later from the sidebar.</div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" id="modal-skip-confirm" style="background:var(--amber); color:#fff;">Mark as Skipped</button>
+      <button class="modal-btn-secondary" onclick="closeModal('modal-skip')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Edit submitted scores?</div>
+    <div class="modal-body" id="modal-edit-body">You are about to edit your submitted score for this team. Changes will overwrite your previous entry in the system.</div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" id="modal-edit-confirm" style="background:var(--track-color); color:#fff;">Edit Scores</button>
+      <button class="modal-btn-secondary" onclick="closeModal('modal-edit')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-duplicate">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚠️ Active Session Found</div>
+    <div class="modal-body" id="modal-dup-body">This judge already has an active session on another device. Are you sure this is you?</div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" id="modal-dup-confirm" style="background:var(--red); color:#fff;">Yes, this is me — Continue</button>
+      <button class="modal-btn-secondary" onclick="closeModal('modal-duplicate')">Go back</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════
+// CONFIG
+// ══════════════════════════════════
+const CONFIG = {
+  // Replace with your deployed Apps Script URL
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwqDwvWuqKpti05ji2LVmBBa4Sb1fZ_GBHNXpqbqQ6LqAYyQwf7aEZvq4FofNgiAOEdPQ/exec',
+
+  tracks: {
+    green: {
+      name: 'Social Inclusion Track',
+      color: 'green',
+      judges: ['Alan Kwan', 'Bosco Leung', 'Ivy Yau', 'Steven Tsoi'],
+      teams: ['T002','T004','T007','T009','T015','T018','T020','T030','T042','T046','T047','T050','T054','T060','T063','T064','T065','T070']
+    },
+    blue: {
+      name: 'Greenhouse Gas Reduction Track',
+      color: 'blue',
+      judges: ['Jessica Chan', 'Kenny Chan', 'Mark Chan', 'Winky Ang'],
+      teams: ['T003','T005','T012','T034','T039','T040','T049','T053','T077','T086']
+    }
+  },
+
+  criteria: [
+    { name: 'Impact',                  weight: 0.25, key: 'impact' },
+    { name: 'Innovation',              weight: 0.25, key: 'innovation' },
+    { name: 'Feasibility & Sustainability', weight: 0.20, key: 'feasibility' },
+    { name: 'Synergy with MTR',        weight: 0.20, key: 'synergy' },
+    { name: 'Presentation',            weight: 0.03, key: 'presentation' },
+    { name: 'Teamwork',                weight: 0.04, key: 'teamwork' },
+    { name: 'Booth Design',            weight: 0.03, key: 'booth' },
+  ]
+};
+
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+let state = {
+  track: null,       // 'green' | 'blue'
+  judge: null,       // judge name string
+  currentTeamIdx: 0, // index into track.teams
+  scores: {},        // { teamId: { criteriaKey: score } | 'skipped' }
+  syncQueue: [],     // pending sync items
+  lastSyncedTeam: null,
+  editingTeam: null, // team being edited
+};
+
+// ══════════════════════════════════
+// STORAGE
+// ══════════════════════════════════
+const STORAGE_KEY = 'tfl2026_judge_session';
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+
+function clearState() {
+  localStorage.removeItem(STORAGE_KEY);
+  state = { track: null, judge: null, currentTeamIdx: 0, scores: {}, syncQueue: [], lastSyncedTeam: null, editingTeam: null };
+}
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+window.addEventListener('load', () => {
+  const saved = loadState();
+  if (saved && saved.judge && saved.track) {
+    // Show recovery banner
+    const notice = document.getElementById('recovery-notice');
+    const trackName = CONFIG.tracks[saved.track]?.name || saved.track;
+    const done = Object.keys(saved.scores).length;
+    const total = CONFIG.tracks[saved.track]?.teams.length || 0;
+    notice.innerHTML = `
+      <div class="recovery-banner">
+        <div class="recovery-banner-title">Welcome back, ${saved.judge} 👋</div>
+        <div class="recovery-banner-text">${trackName} · ${done} of ${total} teams scored. You can continue below.</div>
+      </div>`;
+    // Pre-select track and judge
+    selectTrack(saved.track, true);
+    setTimeout(() => selectJudge(saved.judge, true), 50);
+  }
+  // Retry sync queue
+  retrySync();
+  setInterval(retrySync, 15000);
+});
+
+window.addEventListener('beforeunload', (e) => {
+  if (state.syncQueue.length > 0) {
+    e.preventDefault();
+    e.returnValue = 'You have unsynced scores. Are you sure you want to leave?';
+  }
+});
+
+// ══════════════════════════════════
+// HOME — TRACK SELECTION
+// ══════════════════════════════════
+function selectTrack(trackKey, silent = false) {
+  state.track = trackKey;
+  state.judge = null;
+
+  // Update CSS variable for track color
+  const root = document.documentElement;
+  if (trackKey === 'green') {
+    root.style.setProperty('--track-color', 'var(--green)');
+    root.style.setProperty('--track-light', 'var(--green-light)');
+    root.style.setProperty('--track-mid', 'var(--green-mid)');
+  } else {
+    root.style.setProperty('--track-color', 'var(--blue)');
+    root.style.setProperty('--track-light', 'var(--blue-light)');
+    root.style.setProperty('--track-mid', 'var(--blue-mid)');
+  }
+
+  document.getElementById('track-green').className = 'track-opt' + (trackKey === 'green' ? ' selected-green' : '');
+  document.getElementById('track-blue').className  = 'track-opt' + (trackKey === 'blue'  ? ' selected-blue'  : '');
+
+  // Render judge list
+  const grid = document.getElementById('judge-grid');
+  const judges = CONFIG.tracks[trackKey].judges;
+  grid.innerHTML = '';
+  judges.forEach(name => {
+    const el = document.createElement('div');
+    el.className = 'judge-opt';
+    el.id = 'judge-opt-' + name.replace(/\s/g,'_');
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+    el.innerHTML = `
+      <div class="judge-avatar">${initials}</div>
+      <div class="judge-opt-name">${name}</div>
+      <div class="judge-check">✓</div>`;
+    el.onclick = () => selectJudge(name);
+    grid.appendChild(el);
+  });
+
+  updateStartBtn();
+  if (!silent) saveState();
+}
+
+function selectJudge(name, silent = false) {
+  state.judge = name;
+  document.querySelectorAll('.judge-opt').forEach(el => el.classList.remove('selected'));
+  const el = document.getElementById('judge-opt-' + name.replace(/\s/g,'_'));
+  if (el) el.classList.add('selected');
+  updateStartBtn();
+  if (!silent) saveState();
+}
+
+function updateStartBtn() {
+  const btn = document.getElementById('start-btn');
+  const ready = state.track && state.judge;
+  btn.disabled = !ready;
+  if (ready) {
+    btn.textContent = `Start as ${state.judge}`;
+    btn.className = 'start-btn ready-' + state.track;
+  } else {
+    btn.textContent = 'Start Judging';
+    btn.className = 'start-btn';
+  }
+}
+
+// ══════════════════════════════════
+// START JUDGING
+// ══════════════════════════════════
+function startJudging() {
+  // Check for duplicate session
+  const saved = loadState();
+  if (saved && saved.judge === state.judge && saved.track === state.track && Object.keys(saved.scores || {}).length > 0) {
+    // Restore session directly
+    state = { ...saved };
+    applyTrackStyles();
+    openScoringScreen();
+    return;
+  }
+
+  // Check duplicate (different device same judge would have synced to sheet but we check locally)
+  checkDuplicateSession(() => {
+    applyTrackStyles();
+    openScoringScreen();
+  });
+}
+
+function checkDuplicateSession(proceed) {
+  // In a real scenario this would check the sheet. For now, proceed directly.
+  proceed();
+}
+
+function applyTrackStyles() {
+  const trackKey = state.track;
+  const root = document.documentElement;
+  if (trackKey === 'green') {
+    root.style.setProperty('--track-color', 'var(--green)');
+    root.style.setProperty('--track-light', 'var(--green-light)');
+  } else {
+    root.style.setProperty('--track-color', 'var(--blue)');
+    root.style.setProperty('--track-light', 'var(--blue-light)');
+  }
+}
+
+function openScoringScreen() {
+  // Find first unscored team
+  const teams = CONFIG.tracks[state.track].teams;
+  let idx = state.currentTeamIdx || 0;
+  // If that's already done, find first unscored
+  while (idx < teams.length && state.scores[teams[idx]] !== undefined) {
+    idx++;
+  }
+  if (idx >= teams.length) idx = 0; // wrap to start if all scored
+
+  state.currentTeamIdx = idx;
+  saveState();
+  showScreen('scoring');
+  renderScoringScreen();
+}
+
+// ══════════════════════════════════
+// SCORING SCREEN
+// ══════════════════════════════════
+function renderScoringScreen() {
+  const track = CONFIG.tracks[state.track];
+  const teamId = track.teams[state.currentTeamIdx];
+  const existingScores = (typeof state.scores[teamId] === 'object') ? state.scores[teamId] : {};
+
+  // Top bar
+  document.getElementById('tb-label').textContent = `${track.name}`;
+  document.getElementById('tb-team').textContent = teamId;
+  document.getElementById('tb-judge').textContent = state.judge;
+
+  // Progress
+  const submitted = Object.keys(state.scores).length;
+  const total = track.teams.length;
+  document.getElementById('prog-label').textContent = 'Teams scored';
+  document.getElementById('prog-frac').textContent = `${submitted} / ${total}`;
+  document.getElementById('prog-fill').style.width = `${(submitted/total)*100}%`;
+
+  // Criteria cards
+  const container = document.getElementById('criteria-cards');
+  container.innerHTML = '';
+  CONFIG.criteria.forEach(c => {
+    const val = existingScores[c.key];
+    const card = document.createElement('div');
+    card.className = 'criteria-card' + (val ? ' scored' : '');
+    card.id = 'card-' + c.key;
+    card.innerHTML = `
+      <div class="criteria-top">
+        <div class="criteria-name">${c.name}</div>
+        <div class="criteria-weight">${Math.round(c.weight*100)}%</div>
+      </div>
+      <div class="btn-grid" id="btns-${c.key}"></div>`;
+    container.appendChild(card);
+
+    const btnGrid = document.getElementById('btns-' + c.key);
+    for (let i = 1; i <= 9; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'score-btn' + (val === i ? ' ' + scoreClass(i) : '');
+      btn.textContent = i;
+      btn.onclick = () => selectScore(c.key, i, teamId);
+      btnGrid.appendChild(btn);
+    }
+  });
+
+  updateScoringFooter(existingScores);
+  updateSidebar();
+}
+
+function scoreClass(n) {
+  if (n >= 7) return 'sel-high';
+  if (n <= 3) return 'sel-low';
+  return 'sel-mid';
+}
+
+function selectScore(criteriaKey, val, teamId) {
+  if (!state.scores[teamId] || typeof state.scores[teamId] !== 'object') {
+    state.scores[teamId] = {};
+  }
+  state.scores[teamId][criteriaKey] = val;
+  saveState();
+
+  // Update button UI
+  const grid = document.getElementById('btns-' + criteriaKey);
+  Array.from(grid.children).forEach((btn, idx) => {
+    btn.className = 'score-btn' + ((idx+1) === val ? ' ' + scoreClass(idx+1) : '');
+  });
+
+  // Update card border
+  document.getElementById('card-' + criteriaKey).className = 'criteria-card scored';
+
+  updateScoringFooter(state.scores[teamId]);
+}
+
+function updateScoringFooter(scores) {
+  const keys = CONFIG.criteria.map(c => c.key);
+  const filled = keys.filter(k => scores && scores[k] != null);
+  document.getElementById('stat-scored').textContent = `${filled.length}/7`;
+
+  if (filled.length === keys.length) {
+    const total = keys.reduce((s,k) => s + scores[k], 0);
+    const weighted = CONFIG.criteria.reduce((s,c) => s + scores[c.key] * c.weight, 0);
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-weighted').textContent = weighted.toFixed(2);
+    document.getElementById('submit-btn').disabled = false;
+    document.getElementById('submit-btn').className = 'submit-btn ready';
+    document.getElementById('submit-btn').textContent = `Submit ${CONFIG.tracks[state.track].teams[state.currentTeamIdx]}`;
+  } else {
+    document.getElementById('stat-total').textContent = '—';
+    document.getElementById('stat-weighted').textContent = '—';
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('submit-btn').className = 'submit-btn';
+    document.getElementById('submit-btn').textContent = `Submit Score`;
+  }
+}
+
+function submitTeam() {
+  const track = CONFIG.tracks[state.track];
+  const teamId = track.teams[state.currentTeamIdx];
+  const scores = state.scores[teamId];
+
+  // Sync to sheet
+  queueSync(teamId, scores);
+  saveState();
+
+  // Show confirmation
+  showConfirmation(teamId, scores);
+}
+
+function skipTeam() {
+  openModal('modal-skip');
+  document.getElementById('modal-skip-confirm').onclick = () => {
+    const track = CONFIG.tracks[state.track];
+    const teamId = track.teams[state.currentTeamIdx];
+    state.scores[teamId] = 'skipped';
+    queueSync(teamId, 'skipped');
+    saveState();
+    closeModal('modal-skip');
+    showToast(`${teamId} marked as skipped`);
+    advanceToNextTeam();
+  };
+}
+
+// ══════════════════════════════════
+// CONFIRMATION SCREEN
+// ══════════════════════════════════
+function showConfirmation(teamId, scores) {
+  document.getElementById('conf-team-title').textContent = teamId;
+  document.getElementById('conf-team').textContent = teamId;
+
+  // Score list
+  const list = document.getElementById('conf-scores-list');
+  list.innerHTML = '';
+  let total = 0;
+  let weighted = 0;
+  CONFIG.criteria.forEach(c => {
+    const v = scores[c.key];
+    total += v;
+    weighted += v * c.weight;
+    const cls = v >= 7 ? 'high' : (v <= 3 ? 'low' : 'mid');
+    const row = document.createElement('div');
+    row.className = 'confirm-score-row';
+    row.innerHTML = `
+      <div class="confirm-crit-name">${c.name}</div>
+      <div class="confirm-crit-weight">${Math.round(c.weight*100)}%</div>
+      <div class="confirm-score-pill ${cls}">${v}</div>`;
+    list.appendChild(row);
+  });
+
+  // Total row
+  const totalDiv = document.createElement('div');
+  totalDiv.className = 'confirm-total';
+  totalDiv.innerHTML = `
+    <div class="confirm-total-label">Weighted Score</div>
+    <div class="confirm-total-val">${weighted.toFixed(2)}</div>`;
+  list.appendChild(totalDiv);
+
+  // Next button label
+  const track = CONFIG.tracks[state.track];
+  const nextIdx = getNextTeamIdx();
+  if (nextIdx !== null) {
+    document.getElementById('btn-next').textContent = `Next: ${track.teams[nextIdx]} →`;
+  } else {
+    document.getElementById('btn-next').textContent = '🏁 View Summary';
+  }
+
+  showScreen('confirm');
+  updateSidebar();
+}
+
+function goNextTeam() {
+  const nextIdx = getNextTeamIdx();
+  if (nextIdx !== null) {
+    state.currentTeamIdx = nextIdx;
+    saveState();
+    showScreen('scoring');
+    renderScoringScreen();
+  } else {
+    checkAllDone();
+  }
+}
+
+function editCurrentTeam() {
+  const track = CONFIG.tracks[state.track];
+  const teamId = track.teams[state.currentTeamIdx];
+  document.getElementById('modal-edit-body').textContent =
+    `You are about to edit your submitted score for ${teamId}. Changes will overwrite your previous entry.`;
+  openModal('modal-edit');
+  document.getElementById('modal-edit-confirm').onclick = () => {
+    closeModal('modal-edit');
+    showScreen('scoring');
+    renderScoringScreen();
+  };
+}
+
+function getNextTeamIdx() {
+  const teams = CONFIG.tracks[state.track].teams;
+  // Find next unscored after current
+  for (let i = state.currentTeamIdx + 1; i < teams.length; i++) {
+    if (state.scores[teams[i]] === undefined) return i;
+  }
+  // Check before current
+  for (let i = 0; i < state.currentTeamIdx; i++) {
+    if (state.scores[teams[i]] === undefined) return i;
+  }
+  return null; // all scored
+}
+
+function checkAllDone() {
+  const teams = CONFIG.tracks[state.track].teams;
+  const allDone = teams.every(t => state.scores[t] !== undefined);
+  if (allDone) {
+    // Check if finalised
+    showScreen('done');
+    const submitted = teams.filter(t => state.scores[t] !== 'skipped').length;
+    const skipped = teams.filter(t => state.scores[t] === 'skipped').length;
+    document.getElementById('done-summary').textContent =
+      `${state.judge} · ${CONFIG.tracks[state.track].name} · ${submitted} submitted, ${skipped} skipped`;
+  } else {
+    showScreen('scoring');
+    renderScoringScreen();
+  }
+}
+
+// ══════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  const isOpen = sidebar.classList.contains('open');
+  sidebar.classList.toggle('open', !isOpen);
+  overlay.classList.toggle('open', !isOpen);
+  if (!isOpen) updateSidebar();
+}
+
+function updateSidebar() {
+  if (!state.track) return;
+  const track = CONFIG.tracks[state.track];
+  const teams = track.teams;
+  const total = teams.length;
+  const submitted = teams.filter(t => state.scores[t] && state.scores[t] !== 'skipped').length;
+  const skipped = teams.filter(t => state.scores[t] === 'skipped').length;
+  const done = submitted + skipped;
+
+  document.getElementById('sb-track-name').textContent = track.name;
+  document.getElementById('sb-judge-name').textContent = state.judge;
+  document.getElementById('sb-progress-text').textContent = `${submitted} submitted · ${skipped} skipped · ${total - done} remaining`;
+  document.getElementById('sb-progress-fill').style.width = `${(done/total)*100}%`;
+
+  const list = document.getElementById('sidebar-list');
+  list.innerHTML = '';
+  teams.forEach((teamId, idx) => {
+    const isCurrent = idx === state.currentTeamIdx;
+    const scoreData = state.scores[teamId];
+    let status, badgeCls, statusCls, statusText, scoreText = '';
+
+    if (scoreData === 'skipped') {
+      status = 'skipped'; badgeCls = 'badge-skipped'; statusCls = 'status-skipped'; statusText = '⏭ Skipped';
+    } else if (scoreData && typeof scoreData === 'object') {
+      status = 'submitted'; badgeCls = 'badge-submitted'; statusCls = 'status-submitted'; statusText = '✓ Submitted';
+      const w = CONFIG.criteria.reduce((s,c) => s + scoreData[c.key]*c.weight, 0);
+      scoreText = w.toFixed(1);
+    } else if (isCurrent) {
+      status = 'current'; badgeCls = 'badge-current'; statusCls = 'status-current'; statusText = '→ Scoring now';
+    } else {
+      status = 'empty'; badgeCls = 'badge-empty'; statusCls = 'status-empty'; statusText = 'Not yet scored';
+    }
+
+    const row = document.createElement('div');
+    row.className = 'team-row' + (isCurrent ? ' is-current' : '');
+    row.innerHTML = `
+      <div class="team-num-badge ${badgeCls}">${teamId.replace('T','')}</div>
+      <div class="team-row-info">
+        <div class="team-row-name">${teamId}</div>
+        <div class="team-row-status ${statusCls}">${statusText}</div>
+      </div>
+      <div class="team-row-score">${scoreText}</div>`;
+    row.onclick = () => {
+      state.currentTeamIdx = idx;
+      saveState();
+      toggleSidebar();
+      showScreen('scoring');
+      renderScoringScreen();
+    };
+    list.appendChild(row);
+  });
+
+  // Finalise button
+  const allDone = teams.every(t => state.scores[t] !== undefined);
+  const finBtn = document.getElementById('finalise-btn');
+  finBtn.disabled = !allDone;
+  finBtn.className = 'finalise-btn' + (allDone ? ' ready' : '');
+  document.getElementById('finalise-hint').textContent = allDone
+    ? 'All teams scored — ready to lock'
+    : `${total - done} team${total-done !== 1 ? 's' : ''} remaining`;
+}
+
+function finaliseScores() {
+  const track = CONFIG.tracks[state.track];
+  const teams = track.teams;
+  const allDone = teams.every(t => state.scores[t] !== undefined);
+  if (!allDone) return;
+  toggleSidebar();
+  showScreen('done');
+  const submitted = teams.filter(t => state.scores[t] !== 'skipped').length;
+  const skipped = teams.filter(t => state.scores[t] === 'skipped').length;
+  document.getElementById('done-summary').textContent =
+    `${state.judge} · ${track.name} · ${submitted} submitted, ${skipped} skipped`;
+}
+
+function advanceToNextTeam() {
+  const nextIdx = getNextTeamIdx();
+  if (nextIdx !== null) {
+    state.currentTeamIdx = nextIdx;
+    saveState();
+    showScreen('scoring');
+    renderScoringScreen();
+  } else {
+    checkAllDone();
+  }
+}
+
+// ══════════════════════════════════
+// SYNC
+// ══════════════════════════════════
+function queueSync(teamId, scores) {
+  const item = {
+    judge: state.judge,
+    track: state.track,
+    trackName: CONFIG.tracks[state.track].name,
+    teamId,
+    scores,
+    timestamp: Date.now()
+  };
+  state.syncQueue = state.syncQueue.filter(i => !(i.teamId === teamId && i.judge === state.judge));
+  state.syncQueue.push(item);
+  saveState();
+  setSyncStatus('pending');
+  retrySync();
+}
+
+function retrySync() {
+  if (!state.syncQueue || state.syncQueue.length === 0) return;
+  if (CONFIG.SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    // Demo mode — clear queue silently
+    state.syncQueue = [];
+    saveState();
+    setSyncStatus('synced');
+    return;
+  }
+  const item = state.syncQueue[0];
+  fetch(CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(item)
+  }).then(() => {
+    state.syncQueue.shift();
+    saveState();
+    if (state.syncQueue.length === 0) setSyncStatus('synced');
+    else retrySync();
+  }).catch(() => setSyncStatus('error'));
+}
+
+function setSyncStatus(status) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
+  if (!dot || !txt) return;
+  dot.className = 'sync-dot ' + status;
+  txt.textContent = status === 'synced' ? 'Synced' : status === 'pending' ? 'Syncing…' : 'Retry…';
+}
+
+// ══════════════════════════════════
+// ADMIN
+// ══════════════════════════════════
+function goAdmin() {
+  const pw = prompt('Admin password:');
+  if (pw === 'train4life') {
+    window.location.href = 'admin.html';
+  } else if (pw !== null) {
+    showToast('Incorrect password');
+  }
+}
+
+// ══════════════════════════════════
+// UTILS
+// ══════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg, duration = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+</script>
+</body>
+</html>
