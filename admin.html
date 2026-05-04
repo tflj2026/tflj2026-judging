@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Admin — Train for Life 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+  :root {
+    --green: #1A6B3C; --green-light: #E8F5EE;
+    --blue: #185FA5;  --blue-light: #E6F1FB;
+    --red: #C0392B;   --red-light: #FDECEA;
+    --gold: #C8960A;  --gold-light: #FDF3D0;
+    --text: #1A1A2E;  --text-secondary: #5A6070; --text-tertiary: #9AA0AD;
+    --border: #E2E6EC; --border-light: #F0F3F7; --bg: #F7F9FC; --white: #FFFFFF;
+    --radius: 14px; --radius-sm: 9px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* LOGIN */
+  #screen-login { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 32px 24px; }
+  .login-card { background: var(--white); border-radius: 20px; padding: 32px 24px; width: 100%; max-width: 340px; box-shadow: var(--shadow); text-align: center; }
+  .login-icon { font-size: 40px; margin-bottom: 12px; }
+  .login-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); margin-bottom: 4px; }
+  .login-sub { font-size: 13px; color: var(--text-tertiary); margin-bottom: 24px; }
+  .pw-input { width: 100%; height: 48px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 0 16px; outline: none; color: var(--text); background: var(--bg); text-align: center; letter-spacing: 0.1em; }
+  .pw-input:focus { border-color: var(--blue); }
+  .login-btn { width: 100%; height: 48px; background: #1A1A2E; color: #fff; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+  .login-error { font-size: 13px; color: var(--red); margin-top: 8px; display: none; }
+
+  /* ADMIN */
+  #screen-admin { display: none; flex-direction: column; min-height: 100vh; }
+  .admin-header { background: linear-gradient(135deg, #0D1B2A, #1A3A5C); padding: 20px 20px 16px; }
+  .admin-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .admin-title { font-size: 17px; font-weight: 600; color: #fff; }
+  .admin-sub { font-size: 12px; color: rgba(255,255,255,0.55); }
+  .logout-btn { font-size: 12px; color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.1); border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .last-refresh { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 8px; }
+
+  .admin-body { flex: 1; padding: 16px; overflow-y: auto; }
+
+  /* Section cards */
+  .section-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 14px; overflow: hidden; }
+  .section-header { padding: 14px 16px 12px; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 10px; }
+  .section-icon { font-size: 18px; }
+  .section-title { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+  .section-body { padding: 14px 16px; }
+
+  /* Live status */
+  .track-block { margin-bottom: 16px; }
+  .track-block:last-child { margin-bottom: 0; }
+  .track-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+  .track-label.green { background: var(--green-light); color: var(--green); }
+  .track-label.blue  { background: var(--blue-light);  color: var(--blue); }
+  .judge-status-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-light); }
+  .judge-status-row:last-child { border-bottom: none; }
+  .judge-name-col { font-size: 13px; font-weight: 500; color: var(--text); width: 90px; flex-shrink: 0; }
+  .judge-progress-wrap { flex: 1; }
+  .judge-prog-bar { height: 6px; background: var(--border-light); border-radius: 3px; margin-bottom: 3px; }
+  .judge-prog-fill { height: 6px; border-radius: 3px; transition: width 0.4s; }
+  .fill-green { background: var(--green); }
+  .fill-blue  { background: var(--blue); }
+  .judge-prog-text { font-size: 10px; color: var(--text-tertiary); }
+  .judge-status-badge { font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 10px; flex-shrink: 0; }
+  .badge-done    { background: #D4EDDA; color: #0F6E56; }
+  .badge-partial { background: var(--gold-light); color: var(--gold); }
+  .badge-not-started { background: var(--border-light); color: var(--text-tertiary); }
+
+  /* Refresh btn */
+  .refresh-btn { height: 36px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--white); color: var(--text-secondary); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; padding: 0 14px; display: flex; align-items: center; gap: 6px; }
+  .refresh-btn:active { background: var(--border-light); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinning { animation: spin 0.8s linear infinite; display: inline-block; }
+
+  /* Danger zone */
+  .danger-row { display: flex; flex-direction: column; gap: 10px; }
+  .danger-btn { width: 100%; height: 46px; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-reset { background: var(--red-light); color: var(--red); border: 1.5px solid #F5C6C2; }
+  .btn-lock  { background: #1A1A2E; color: #fff; }
+  .btn-export { background: var(--green-light); color: var(--green); border: 1.5px solid #A8D5BC; }
+
+  /* Info rows */
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { color: var(--text-secondary); }
+  .info-val { font-weight: 500; color: var(--text); }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: flex-end; }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet { background: var(--white); width: 100%; border-radius: 20px 20px 0 0; padding: 24px 20px 36px; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .modal-body  { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+  .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+  .modal-primary { height: 48px; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .modal-secondary { height: 44px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--white); color: var(--text-secondary); cursor: pointer; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1A1A2E; color: #fff; font-size: 13px; padding: 10px 20px; border-radius: 20px; transition: transform 0.3s; z-index: 300; white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Loading state */
+  .loading-placeholder { text-align: center; padding: 20px; color: var(--text-tertiary); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="screen-login">
+  <div class="login-card">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">'Train' for Life's Journeys 2.0 (2026)</div>
+    <input type="password" class="pw-input" id="pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-error" id="login-error">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="screen-admin">
+  <div class="admin-header">
+    <div class="admin-header-top">
+      <div>
+        <div class="admin-title">Admin Panel</div>
+        <div class="admin-sub">Train for Life 2026 · Semi-final</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    <div class="last-refresh" id="last-refresh">Not yet refreshed</div>
+  </div>
+
+  <div class="admin-body">
+
+    <!-- LIVE STATUS -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <div class="section-title">Live Judge Progress</div>
+        <button class="refresh-btn" onclick="loadStatus()">
+          <span id="refresh-icon">↻</span> Refresh
+        </button>
+      </div>
+      <div class="section-body" id="status-body">
+        <div class="loading-placeholder">Tap Refresh to load judge status</div>
+      </div>
+    </div>
+
+    <!-- SYSTEM INFO -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">ℹ️</div>
+        <div class="section-title">System Info</div>
+      </div>
+      <div class="section-body">
+        <div class="info-row"><span class="info-label">Programme</span><span class="info-val">TFL 2026</span></div>
+        <div class="info-row"><span class="info-label">Track A teams</span><span class="info-val">18 teams</span></div>
+        <div class="info-row"><span class="info-label">Track B teams</span><span class="info-val">10 teams</span></div>
+        <div class="info-row"><span class="info-label">Judges</span><span class="info-val">8 total (4 per track)</span></div>
+        <div class="info-row"><span class="info-label">Criteria</span><span class="info-val">7 weighted criteria</span></div>
+        <div class="info-row"><span class="info-label">Score range</span><span class="info-val">1 – 9 per criteria</span></div>
+        <div class="info-row">
+          <span class="info-label">Script URL</span>
+          <span class="info-val" id="script-url-display" style="font-size:11px; color:var(--text-tertiary); max-width:160px; overflow:hidden; text-overflow:ellipsis;">
+            Not configured
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">⚙️</div>
+        <div class="section-title">Actions</div>
+      </div>
+      <div class="section-body">
+        <div class="danger-row">
+          <button class="danger-btn btn-export" onclick="openGoogleSheet()">
+            📄 Open Google Sheet
+          </button>
+          <button class="danger-btn btn-reset" onclick="confirmReset()">
+            🗑️ Reset All Scores (Testing)
+          </button>
+          <button class="danger-btn btn-lock" onclick="confirmLockAll()">
+            🔒 Lock All Judge Sessions
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTO REFRESH -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">🔄</div>
+        <div class="section-title">Auto Refresh</div>
+      </div>
+      <div class="section-body">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="refresh-btn" onclick="setAutoRefresh(0)"  id="ar-off" style="flex:1;">Off</button>
+          <button class="refresh-btn" onclick="setAutoRefresh(30)" id="ar-30"  style="flex:1;">30s</button>
+          <button class="refresh-btn" onclick="setAutoRefresh(60)" id="ar-60"  style="flex:1;">1 min</button>
+        </div>
+        <div style="font-size:11px; color:var(--text-tertiary); margin-top:8px; text-align:center;" id="ar-status">Auto refresh is off</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-reset">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚠️ Reset All Scores?</div>
+    <div class="modal-body">This will permanently clear ALL judge scores from both tracks in the Google Sheet. Use this only during testing. This cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="modal-primary" style="background:var(--red); color:#fff;" onclick="doReset()">Yes, Reset Everything</button>
+      <button class="modal-secondary" onclick="closeModal('modal-reset')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-lock">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔒 Lock All Sessions?</div>
+    <div class="modal-body">This will prevent judges from submitting any further scores. Use this after all judging is complete. Judges will see a "Judging has ended" message.</div>
+    <div class="modal-actions">
+      <button class="modal-primary" style="background:#1A1A2E; color:#fff;" onclick="doLockAll()">Lock All Sessions</button>
+      <button class="modal-secondary" onclick="closeModal('modal-lock')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG — paste your Apps Script URL here ──
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqX7Kw9U80WnFJ1T15a6uxuHRhg58M4_vxGp95vPAuy8ITpzOeENvVkhu2Orn4YY0GQA/exec';
+const ADMIN_PASSWORD = 'train4life';
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/10Ukt0qP-ciMb56uOvDFLDII9Eoo0cHj7cIZhZuJGFuE/edit?gid=2062816085#gid=2062816085'; // paste your sheet URL
+
+let autoRefreshTimer = null;
+let autoRefreshInterval = 0;
+
+// ── LOGIN ──
+function doLogin() {
+  const pw = document.getElementById('pw-input').value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById('screen-login').style.display = 'none';
+    document.getElementById('screen-admin').style.display = 'flex';
+    document.getElementById('screen-admin').style.flexDirection = 'column';
+    if (SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+      document.getElementById('script-url-display').textContent = SCRIPT_URL;
+      loadStatus();
+    }
+  } else {
+    const err = document.getElementById('login-error');
+    err.style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    setTimeout(() => { err.style.display = 'none'; }, 3000);
+  }
+}
+
+function logout() {
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('screen-admin').style.display = 'none';
+  document.getElementById('pw-input').value = '';
+  setAutoRefresh(0);
+}
+
+// ── LOAD STATUS ──
+async function loadStatus() {
+  const icon = document.getElementById('refresh-icon');
+  icon.classList.add('spinning');
+
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    // Demo mode
+    renderDemoStatus();
+    icon.classList.remove('spinning');
+    document.getElementById('last-refresh').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString('en-HK');
+    return;
+  }
+
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=getStatus');
+    const data = await res.json();
+    if (data.success) {
+      renderStatus(data.status);
+      document.getElementById('last-refresh').textContent = 'Last refreshed: ' + new Date().toLocaleTimeString('en-HK');
+    } else {
+      showToast('Error: ' + data.error);
+    }
+  } catch(e) {
+    showToast('Network error — check connection');
+  }
+  icon.classList.remove('spinning');
+}
+
+function renderStatus(status) {
+  const body = document.getElementById('status-body');
+  body.innerHTML = '';
+
+  const trackMeta = {
+    green: { label: 'Social Inclusion Track', cls: 'green', fillCls: 'fill-green' },
+    blue:  { label: 'Greenhouse Gas Reduction Track', cls: 'blue', fillCls: 'fill-blue' }
+  };
+
+  Object.entries(status).forEach(([trackKey, trackData]) => {
+    const meta = trackMeta[trackKey];
+    const block = document.createElement('div');
+    block.className = 'track-block';
+    block.innerHTML = `<div class="track-label ${meta.cls}">${meta.label}</div>`;
+
+    Object.entries(trackData.judges).forEach(([judgeName, judgeData]) => {
+      const pct = Math.round((judgeData.scored + judgeData.skipped) / judgeData.total * 100);
+      const badge = judgeData.complete ? 'badge-done' : judgeData.scored > 0 ? 'badge-partial' : 'badge-not-started';
+      const badgeText = judgeData.complete ? '✓ Done' : judgeData.scored > 0 ? 'In progress' : 'Not started';
+      const row = document.createElement('div');
+      row.className = 'judge-status-row';
+      row.innerHTML = `
+        <div class="judge-name-col">${judgeName}</div>
+        <div class="judge-progress-wrap">
+          <div class="judge-prog-bar">
+            <div class="judge-prog-fill ${meta.fillCls}" style="width:${pct}%"></div>
+          </div>
+          <div class="judge-prog-text">${judgeData.scored} scored · ${judgeData.skipped} skipped · ${judgeData.missing} remaining</div>
+        </div>
+        <div class="judge-status-badge ${badge}">${badgeText}</div>`;
+      block.appendChild(row);
+    });
+
+    body.appendChild(block);
+  });
+}
+
+function renderDemoStatus() {
+  const demoStatus = {
+    green: {
+      judges: {
+        'Bosco':     { scored: 18, skipped: 0, missing: 0, total: 18, complete: true },
+        'Steven':    { scored: 12, skipped: 1, missing: 5, total: 18, complete: false },
+        'Ivy':       { scored:  7, skipped: 0, missing: 11, total: 18, complete: false },
+        'Alan Kwan': { scored:  0, skipped: 0, missing: 18, total: 18, complete: false },
+      }
+    },
+    blue: {
+      judges: {
+        'Jessica': { scored: 10, skipped: 0, missing: 0, total: 10, complete: true },
+        'CMRS':    { scored:  8, skipped: 1, missing: 1, total: 10, complete: false },
+        'Winky':   { scored:  5, skipped: 0, missing: 5, total: 10, complete: false },
+        'Kenny':   { scored:  3, skipped: 0, missing: 7, total: 10, complete: false },
+      }
+    }
+  };
+  renderStatus(demoStatus);
+}
+
+// ── AUTO REFRESH ──
+function setAutoRefresh(seconds) {
+  clearInterval(autoRefreshTimer);
+  autoRefreshInterval = seconds;
+  ['ar-off','ar-30','ar-60'].forEach(id => {
+    document.getElementById(id).style.background = 'var(--bg)';
+    document.getElementById(id).style.borderColor = 'var(--border)';
+  });
+  if (seconds === 0) {
+    document.getElementById('ar-off').style.background = '#1A1A2E';
+    document.getElementById('ar-off').style.color = '#fff';
+    document.getElementById('ar-status').textContent = 'Auto refresh is off';
+  } else {
+    const btnId = seconds === 30 ? 'ar-30' : 'ar-60';
+    document.getElementById(btnId).style.background = 'var(--blue)';
+    document.getElementById(btnId).style.color = '#fff';
+    document.getElementById('ar-status').textContent = `Refreshing every ${seconds} seconds`;
+    autoRefreshTimer = setInterval(loadStatus, seconds * 1000);
+  }
+}
+
+// ── RESET ──
+function confirmReset() { openModal('modal-reset'); }
+
+async function doReset() {
+  closeModal('modal-reset');
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    showToast('Demo mode — no actual reset performed');
+    return;
+  }
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'resetAll', password: ADMIN_PASSWORD })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('✅ All scores cleared');
+      loadStatus();
+    } else {
+      showToast('Error: ' + data.error);
+    }
+  } catch(e) {
+    showToast('Network error');
+  }
+}
+
+// ── LOCK ──
+function confirmLockAll() { openModal('modal-lock'); }
+
+function doLockAll() {
+  closeModal('modal-lock');
+  // Write lock flag to localStorage on this device
+  // In a full production system, this would POST to the sheet
+  localStorage.setItem('tfl2026_admin_locked', 'true');
+  showToast('🔒 All sessions locked');
+}
+
+// ── SHEET ──
+function openGoogleSheet() {
+  if (SHEET_URL === 'YOUR_GOOGLE_SHEET_URL_HERE') {
+    showToast('Paste your sheet URL into admin.html first');
+    return;
+  }
+  window.open(SHEET_URL, '_blank');
+}
+
+// ── UTILS ──
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg, duration = 2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// Close modals on overlay tap
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+// Init
+setAutoRefresh(0);
+</script>
+</body>
+</html>
